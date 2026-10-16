@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>PPOINT Tracker</title>
+<style>
+  :root{--bg:#000;--a:#160a0b;--b:#000;--head:#1c0b0d;--green:#ff2d3d;--cyan:#ff6b74;--gold:#f2c94c;--silver:#c4c8cf;--text:#f4eeee;--muted:#a08a8c;--danger:#ff9aa0;--line:#3a1417}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;padding:20px 14px 60px}
+  .wrap{max-width:820px;margin:0 auto}
+  h1{margin:0;font-size:34px;color:var(--green);font-weight:500;direction:ltr;text-align:right}
+  .sub{color:var(--muted);margin:2px 0 16px;direction:ltr;text-align:right}
+  .summary{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+  .summary div{flex:1;min-width:120px;background:var(--a);padding:10px 14px;border-radius:6px}
+  .summary small{display:block;color:var(--muted);font-size:12px}
+  .summary b{font-size:20px;font-weight:500}.summary .usd{color:var(--cyan)}
+  input,select,button{font:inherit;color:var(--text);background:var(--head);border:1px solid var(--line);border-radius:6px;padding:9px 12px;min-width:0}
+  input:focus,select:focus,button:focus-visible{outline:2px solid var(--cyan);outline-offset:1px}
+  button{cursor:pointer}
+  button.primary{background:var(--green);color:#fff;border-color:var(--green);font-weight:600}
+  .bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+  .status{color:var(--muted);font-size:13px;flex:1;min-width:150px}
+  .status.err{color:var(--danger)}
+  .tablebox{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;direction:ltr;min-width:520px}
+  thead th{background:var(--head);color:var(--cyan);font-weight:400;text-align:left;padding:12px 14px;cursor:pointer;user-select:none;white-space:nowrap}
+  tbody tr:nth-child(odd){background:var(--a)} tbody tr:nth-child(even){background:var(--b)}
+  td{padding:14px;font-size:17px} td.acct{font-size:15px;word-break:break-all}
+  td small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+  .Gold{color:var(--gold)}.Silver{color:var(--silver)}.Platinum{color:#dbe6ff}.Bronze{color:#d9915a}.Diamond{color:#b69cff}.Unknown{color:var(--muted)}
+  td.act{text-align:right;white-space:nowrap;width:1%}
+  td.act button{padding:4px 9px;font-size:13px;margin-left:4px;color:var(--muted);background:transparent}
+  td.act button.del:hover{color:var(--danger);border-color:var(--danger)}
+  td input,td select{width:100%;padding:6px 8px;font-size:15px}
+  .empty{padding:30px;text-align:center;color:var(--muted)}
+  .setup{background:var(--a);border:1px solid var(--line);padding:14px;border-radius:6px;color:var(--muted);font-size:14px;margin-bottom:14px}
+  details{margin-top:18px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>PPOINT Tracker</h1>
+  <div class="sub">Full accounts report</div>
+
+  <div class="summary">
+    <div><small>تعداد اکانت‌ها</small><b id="sCount">0</b></div>
+    <div><small>مجموع امتیاز</small><b id="sPoints">0</b></div>
+    <div><small>مجموع دلار</small><b class="usd" id="sUsd">$0.00</b></div>
+  </div>
+
+  <div class="setup" id="setup" hidden>
+    هنوز Client ID گوگل تنظیم نشده. فایل <b>index.html</b> رو باز کن و مقدار <b>GOOGLE_CLIENT_ID</b> رو بنویس (راهنما توی README هست). تا اون موقع فقط افزودن دستی کار می‌کنه.
+  </div>
+
+  <div class="bar">
+    <button class="primary" id="addGoogle">+ ورود با گوگل</button>
+    <button id="refreshAll">به‌روزرسانی همه</button>
+    <button id="addManual">افزودن دستی</button>
+    <span class="status" id="status"></span>
+  </div>
+
+  <div class="tablebox">
+    <table>
+      <thead><tr>
+        <th data-k="email">Account</th><th data-k="rank">Rank</th><th data-k="points">Points</th><th data-k="usd">Dollar</th><th></th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <div class="empty" id="empty" hidden>هنوز اکانتی نیست. با «ورود با گوگل» شروع کن.</div>
+
+  <details>
+    <summary>حریم خصوصی</summary>
+    <p><a href="privacy.html" style="color:var(--cyan)">صفحه‌ی کامل سیاست حریم خصوصی</a></p>
+    <p>فقط اجازه‌ی خواندن جی‌میل گرفته میشه و فقط ایمیل‌های Google Play خونده میشن. توکن ورود ذخیره نمیشه و اطلاعات فقط روی همین گوشی/مرورگر می‌مونه.</p>
+  </details>
+</div>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+// ====== تنظیمات: Client ID گوگل رو اینجا بنویس ======
+const GOOGLE_CLIENT_ID = '165607945187-lbolfkbhtpe6i3orj05sig19tvnu34ss.apps.googleusercontent.com';
+// =====================================================
+
+const SCOPE = 'https://www.googleapis.com/auth/gmail.readonly';
+const KEY = 'ppoint-accounts-v1';
+const RANKS = ['Unknown','Bronze','Silver','Gold','Platinum','Diamond'];
+const RANK_ORDER = {Unknown:-1,Bronze:0,Silver:1,Gold:2,Platinum:3,Diamond:4};
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+let accounts = JSON.parse(localStorage.getItem(KEY) || '[]');
+let sort = {k:'usd', dir:-1}, editing = null, tokenClient = null, pending = null;
+const configured = !GOOGLE_CLIENT_ID.startsWith('PUT_YOUR');
+const persist = () => localStorage.setItem(KEY, JSON.stringify(accounts));
+function setStatus(t, err){ const s=$('status'); s.textContent=t||''; s.className='status'+(err?' err':''); }
+
+// ---------- Google sign-in (token only, nothing stored) ----------
+function initGoogle(){
+  if(!configured || !window.google || tokenClient) return !!tokenClient;
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID, scope: SCOPE,
+    callback: r => { const p=pending; pending=null; if(p) r.access_token ? p.resolve(r.access_token) : p.reject(new Error(r.error||'no token')); },
+    error_callback: e => { const p=pending; pending=null; if(p) p.reject(new Error(e.type||'popup')); }
+  });
+  return true;
+}
+function getToken(hint, interactive){
+  return new Promise((resolve,reject)=>{
+    if(!initGoogle()) return reject(new Error('اسکریپت گوگل هنوز لود نشده؛ چند ثانیه بعد دوباره امتحان کن'));
+    if(pending) return reject(new Error('یه ورود دیگه در جریانه'));
+    pending = {resolve,reject};
+    tokenClient.requestAccessToken({ login_hint: hint||'', prompt: interactive ? (hint?'':'select_account') : 'none' });
+  });
+}
+async function gmail(path, token){
+  const r = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/'+path, {headers:{Authorization:'Bearer '+token}});
+  if(!r.ok) throw new Error(r.status===401?'ورود منقضی شده':r.status===403?'دسترسی جی‌میل داده نشده':r.status===429?'محدودیت سرعت گوگل؛ کمی بعد دوباره':'Gmail '+r.status);
+  return r.json();
+}
+
+// ---------- Read Play Points info from emails ----------
+async function readPlayPoints(token){
+  const profile = await gmail('profile', token);
+  // all Google emails that mention Play Points / Play Credit (last 2 years), up to 300
+  const q = encodeURIComponent('from:google.com ("Play Points" OR "Google Play Points" OR "Play Credit") newer_than:730d');
+  const ids = []; let pageToken = '';
+  do{
+    const r = await gmail('messages?maxResults=100&q='+q+(pageToken?'&pageToken='+pageToken:''), token);
+    ids.push(...(r.messages||[])); pageToken = r.nextPageToken||'';
+  }while(pageToken && ids.length<300);
+
+  const msgs = [];
+  for(let i=0;i<ids.length;i+=10){
+    const part = await Promise.all(ids.slice(i,i+10).map(m =>
+      gmail('messages/'+m.id+'?format=metadata&metadataHeaders=Subject', token).catch(()=>null)));
+    msgs.push(...part.filter(Boolean));
+    setStatus('در حال خواندن ایمیل‌ها... '+Math.min(i+10,ids.length)+'/'+ids.length);
+  }
+  msgs.sort((a,b)=>Number(b.internalDate)-Number(a.internalDate));   // newest first
+
+  const out = {email:profile.emailAddress, rank:null, points:null, stats:{scanned:msgs.length, creditUsd:0, pointsSpent:0, redemptions:0, lastPrize:null}};
+  for(const m of msgs){
+    const s = (m.snippet||'').replace(/&#39;/g,"'").replace(/&amp;/g,'&');
+    const t = Number(m.internalDate);
+    // Weekly prize email: "Your Play Points • Silver 23"
+    const w = s.match(/Play Points\s*[•·]\s*(Bronze|Silver|Gold|Platinum|Diamond)\s+(\d+)/i);
+    if(w && out.points===null){ out.points=parseInt(w[2],10); out.stats.lastPrize=t; if(!out.rank) out.rank=cap(w[1]); }
+    // Rank-up email: "Congrats on earning Gold" / "You've hit Play Points Gold"
+    const c = s.match(/(?:earning|hit Play Points|reached Play Points)\s+(Bronze|Silver|Gold|Platinum|Diamond)/i);
+    if(c && !out.rank) out.rank = cap(c[1]);
+    // Redemption receipts
+    const cr = s.match(/Play Points used\s*\$([\d.]+)\s*Google Play Credit\s*(\d+)/i);
+    if(cr){ out.stats.creditUsd += parseFloat(cr[1]); out.stats.pointsSpent += parseInt(cr[2],10); out.stats.redemptions++; }
+    else if(/using Google Play Points/i.test(s)){
+      out.stats.redemptions++;
+      const sw = s.match(/Play Points used\s*(\d+)\s/); if(sw) out.stats.pointsSpent += parseInt(sw[1],10);
+    }
+  }
+  return out;
+}
+const cap = s => s[0].toUpperCase()+s.slice(1).toLowerCase();
+
+async function syncAccount(hint, interactive){
+  const token = await getToken(hint, interactive);
+  const info = await readPlayPoints(token);
+  let a = accounts.find(x=>x.email.toLowerCase()===info.email.toLowerCase());
+  if(!a){ a = {id:uid(), email:info.email, rank:'Unknown', points:0, usd:0}; accounts.push(a); }
+  if(info.rank) a.rank = info.rank;
+  if(info.points!==null) a.points = info.points;
+  a.stats = info.stats;
+  a.updated = Date.now();
+  persist(); render();
+  return info;
+}
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+async function refreshAll(){
+  if(!navigator.onLine) return setStatus('اینترنت وصل نیست.', true);
+  if(!configured) return setStatus('اول Client ID رو تنظیم کن.', true);
+  const targets = accounts.filter(a=>a.email.includes('@'));
+  if(!targets.length) return setStatus('اول یه اکانت با گوگل اضافه کن.', true);
+  let ok=0, fail=0;
+  for(const a of targets){
+    setStatus('در حال خواندن '+a.email+' ...');
+    try{ await syncAccount(a.email, false); ok++; }
+    catch(e){ fail++; }
+  }
+  setStatus(fail ? `${ok} اکانت به‌روز شد. ${fail} تا نیاز به ورود دوباره دارن (دکمه‌ی «ورود با گوگل»).` : `همه‌ی ${ok} اکانت به‌روز شدن.`, !!fail);
+}
+
+// ---------- UI ----------
+function render(){
+  const list=[...accounts];
+  list.sort((a,b)=>{
+    let x=a[sort.k==='email'?'email':sort.k], y=b[sort.k==='email'?'email':sort.k];
+    if(sort.k==='rank'){x=RANK_ORDER[x];y=RANK_ORDER[y];}
+    return typeof x==='string' ? x.localeCompare(y)*sort.dir : (x-y)*sort.dir;
+  });
+  $('rows').innerHTML = list.map(a=>editing===a.id?editRow(a):viewRow(a)).join('');
+  $('empty').hidden = accounts.length>0;
+  $('sCount').textContent = accounts.length;
+  $('sPoints').textContent = accounts.reduce((s,a)=>s+a.points,0);
+  $('sUsd').textContent = '$'+accounts.reduce((s,a)=>s+a.usd,0).toFixed(2);
+  $('setup').hidden = configured;
+}
+const when = t => t ? new Date(t).toLocaleString('fa-IR',{dateStyle:'short',timeStyle:'short'}) : '';
+const viewRow = a => `<tr>
+  <td class="acct">${esc(a.email)}${a.stats?`<small>${a.stats.scanned} ایمیل خوانده شد • اعتبار از امتیاز: $${a.stats.creditUsd.toFixed(2)} • امتیاز خرج‌شده: ${a.stats.pointsSpent}</small>`:''}${a.updated?`<small>${when(a.updated)}</small>`:''}</td>
+  <td class="${a.rank}">${a.rank==='Unknown'?'—':a.rank}</td><td>${a.points}</td><td>$${a.usd.toFixed(2)}</td>
+  <td class="act"><button onclick="startEdit('${a.id}')">ویرایش</button><button class="del" onclick="removeAcc('${a.id}')">حذف</button></td></tr>`;
+const editRow = a => `<tr>
+  <td><input id="eEmail" value="${esc(a.email)}"></td>
+  <td><select id="eRank">${RANKS.map(r=>`<option ${r===a.rank?'selected':''}>${r}</option>`).join('')}</select></td>
+  <td><input id="ePoints" type="number" min="0" value="${a.points}"></td>
+  <td><input id="eUsd" type="number" min="0" step="0.01" value="${a.usd}"></td>
+  <td class="act"><button onclick="saveEdit('${a.id}')">ذخیره</button><button onclick="cancelEdit()">لغو</button></td></tr>`;
+window.startEdit=id=>{editing=id;render();};
+window.cancelEdit=()=>{ const a=accounts.find(x=>x.id===editing); if(a && a.email==='new-account'){accounts=accounts.filter(x=>x!==a);persist();} editing=null;render(); };
+window.saveEdit=id=>{
+  const a=accounts.find(x=>x.id===id);
+  a.email=$('eEmail').value.trim()||a.email; a.rank=$('eRank').value;
+  a.points=Math.max(0,parseInt($('ePoints').value)||0); a.usd=Math.max(0,parseFloat($('eUsd').value)||0);
+  editing=null; persist(); render();
+};
+window.removeAcc=id=>{ if(!confirm('این اکانت حذف شود؟')) return; accounts=accounts.filter(a=>a.id!==id); persist(); render(); };
+
+$('addManual').onclick=()=>{ const a={id:uid(),email:'new-account',rank:'Unknown',points:0,usd:0}; accounts.push(a); editing=a.id; render(); };
+$('addGoogle').onclick=async()=>{
+  if(!configured) return setStatus('اول Client ID رو تنظیم کن.', true);
+  setStatus('در حال ورود...');
+  try{ const i=await syncAccount('', true); setStatus(`${i.email} اضافه شد: ${i.rank||'رتبه پیدا نشد'}، ${i.points??'امتیاز پیدا نشد'}`); }
+  catch(e){ setStatus('ورود انجام نشد: '+e.message, true); }
+};
+$('refreshAll').onclick=refreshAll;
+document.querySelectorAll('thead th[data-k]').forEach(th=>th.onclick=()=>{
+  const k=th.dataset.k; sort={k,dir:sort.k===k?-sort.dir:(k==='email'?1:-1)}; render();
+});
+
+render();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+// Auto-update on open: wait for Google script, then try silently
+window.addEventListener('load', ()=>{
+  if(!configured || !accounts.some(a=>a.email.includes('@'))) return;
+  const t=setInterval(()=>{ if(window.google && window.google.accounts){ clearInterval(t); refreshAll().catch(()=>{}); } },300);
+  setTimeout(()=>clearInterval(t),8000);
+});
+</script>
+</body>
+</html>
