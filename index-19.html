@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="red">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>PPOINT | PLAY POINT</title>
+<style>
+  :root,[data-theme="red"]{--bg:#000;--card:#0f0608;--line:#ff2d3d;--accent:#ff2d3d;--on-accent:#fff;--c1:#ff6b74;--c1bg:rgba(255,45,61,.16);--c2:#c9a2ff;--c2bg:rgba(176,124,255,.15);--text:#f4eeee;--muted:#a08a8c;--sheet:#150a0c;--field:#1d0e11;--bd:#3a1417;--danger:#ff9aa0}
+  [data-theme="green"]{--bg:#0a0e17;--card:#101826;--line:#3ddc84;--accent:#3ddc84;--on-accent:#04210f;--c1:#4ade80;--c1bg:rgba(74,222,128,.15);--c2:#c06cff;--c2bg:rgba(192,108,255,.15);--text:#e8eef7;--muted:#8a96a8;--sheet:#131c2b;--field:#1a2536;--bd:#243349;--danger:#ff8a8a}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;padding:0 14px 110px;min-height:100vh}
+  .wrap{max-width:640px;margin:0 auto}
+  header{position:sticky;top:0;background:var(--bg);padding:16px 0 10px;z-index:5}
+  .bar{display:flex;align-items:center;justify-content:space-between;direction:ltr;gap:10px}
+  h1{margin:0;font-size:19px;font-weight:700;letter-spacing:.3px;white-space:nowrap}
+  .icons{display:flex;gap:6px}
+  .ib{background:none;border:0;padding:8px;color:var(--accent);cursor:pointer;border-radius:10px;display:flex}
+  .ib{position:relative}
+  .badge{position:absolute;top:1px;right:0;min-width:18px;height:18px;border-radius:9px;background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+  .badge[hidden]{display:none}
+  .ib svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .searchrow{display:flex;gap:8px;align-items:center;margin-top:12px;direction:ltr}
+  .search{flex:1;display:flex;align-items:center;gap:10px;border:1.5px solid var(--bd);border-radius:999px;padding:0 16px;height:50px;background:transparent}
+  .search svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:2}
+  .search input{flex:1;background:none;border:0;outline:0;color:var(--text);font:inherit;min-width:0;direction:rtl}
+  .summary{display:flex;gap:14px;color:var(--muted);font-size:13px;margin:10px 4px 0;flex-wrap:wrap}
+  .summary b{color:var(--text);font-weight:600;unicode-bidi:isolate;direction:ltr}
+  #status{font-size:13px;color:var(--muted);margin:8px 4px 0;min-height:18px}
+  #status.err{color:var(--danger)}
+  #list{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+  .card{direction:ltr;text-align:left;border:1.5px solid var(--line);border-radius:22px;padding:14px 16px;background:var(--card);cursor:pointer}
+  .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;min-height:30px}
+  .name{font-size:15px;color:var(--text);word-break:break-all;padding-top:4px}
+  .badges{display:flex;align-items:center;gap:8px;flex-shrink:0}
+  .noteic{width:20px;height:20px;stroke:var(--c1);fill:none;stroke-width:2}
+  .rank{padding:6px 14px;border-radius:10px;font-size:15px;background:rgba(255,255,255,.08)}
+  .Gold{color:#f2c94c;background:rgba(242,201,76,.14)} .Silver{color:#c4c8cf;background:rgba(196,200,207,.14)}
+  .Platinum{color:#4fd8f5;background:rgba(79,216,245,.14)} .Bronze{color:#d9915a;background:rgba(217,145,90,.14)}
+  .Diamond{color:#b69cff;background:rgba(182,156,255,.14)} .Unknown{color:var(--muted)}
+  .chips{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
+  .chip{padding:9px 14px;border-radius:12px;font-size:17px;display:flex;align-items:center;gap:7px}
+  .chip.p{color:var(--c1);background:var(--c1bg)} .chip.d{color:var(--c2);background:var(--c2bg)}
+  .chip svg{width:16px;height:16px;fill:currentColor}
+  .delta{font-size:13px;padding:4px 8px;border-radius:8px;align-self:center}
+  .delta.up{color:#5be28a;background:rgba(91,226,138,.12)} .delta.down{color:#ff8a8a;background:rgba(255,138,138,.12)}
+  .al{display:flex;gap:10px;padding:12px 4px;border-bottom:1px solid var(--bd);direction:ltr;text-align:left}
+  .al.new{background:rgba(255,255,255,.04)}
+  .al .ic{font-size:22px;line-height:1.2}
+  .al .tt{font-size:14px;color:var(--text);word-break:break-word}
+  .al .mm{font-size:12px;color:var(--muted);margin-top:2px;word-break:break-word}
+  .al .ty{font-size:11.5px;color:var(--c1)}
+  .kv{display:flex;justify-content:space-between;gap:10px;padding:8px 2px;border-bottom:1px solid var(--bd);font-size:14px}
+  .kv span:first-child{color:var(--muted)}
+  svg.chart{width:100%;height:110px;margin-top:6px}
+  .edited{margin-top:10px;font-size:13px;color:var(--muted)}
+  .empty{text-align:center;color:var(--muted);padding:50px 10px;line-height:2}
+  .fab{position:fixed;right:20px;bottom:calc(22px + env(safe-area-inset-bottom));width:62px;height:62px;border-radius:50%;background:var(--accent);color:var(--on-accent);border:0;font-size:36px;line-height:1;cursor:pointer;box-shadow:0 6px 22px rgba(0,0,0,.5)}
+  #overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+  #overlay[hidden]{display:none}
+  #sheet{background:var(--sheet);width:100%;max-width:640px;max-height:88vh;overflow:auto;border-radius:24px 24px 0 0;padding:20px 18px calc(24px + env(safe-area-inset-bottom));border:1px solid var(--bd);border-bottom:0}
+  #sheet h2{margin:0 0 14px;font-size:19px;font-weight:600}
+  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 0}
+  input,select,textarea{width:100%;margin-top:5px;font:inherit;color:var(--text);background:var(--field);border:1px solid var(--bd);border-radius:12px;padding:11px 12px}
+  textarea{min-height:70px;resize:vertical}
+  input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .btn{font:inherit;color:var(--text);background:var(--field);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;cursor:pointer}
+  .btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:700}
+  .btn.danger{color:var(--danger)}
+  .btn.block{width:100%;margin-top:10px}
+  .actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+  .actions .btn{flex:1;min-width:110px}
+  .or{text-align:center;color:var(--muted);font-size:13px;margin:12px 0 0}
+  .opt{display:flex;justify-content:space-between;align-items:center;padding:13px 6px;border-bottom:1px solid var(--bd);cursor:pointer}
+  .opt.on{color:var(--accent);font-weight:600}
+  .rep{font-size:12.5px;line-height:1.8;color:var(--muted);direction:ltr;text-align:left}
+  .rep div{border-top:1px solid var(--bd);padding:7px 0}
+  .rep span{color:var(--c1)}
+  .hint{font-size:12.5px;color:var(--muted);line-height:1.8;margin:10px 0 0}
+  a{color:var(--c1)}
+  @media print{
+    body{background:#fff;color:#000;padding:0}
+    header .icons,.searchrow,.fab,#status,#overlay{display:none!important}
+    header{position:static}
+    h1{color:#000}
+    .card{background:#fff;border:1px solid #999;break-inside:avoid;color:#000}
+    .name,.summary b{color:#000}
+    .chip,.rank{background:#eee!important;color:#000!important}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="bar">
+      <h1>PPOINT | PLAY POINT</h1>
+      <div class="icons">
+        <button class="ib" id="btnPdf" title="PDF" aria-label="PDF"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 14h6M9 17h4"/></svg></button>
+        <button class="ib" id="btnBell" title="پیام‌ها و هشدارها" aria-label="Alerts"><svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 1 1 12 0v6l1.5 2h-15z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><span class="badge" id="bellBadge" hidden>0</span></button>
+        <button class="ib" id="btnSync" title="به‌روزرسانی از جی‌میل" aria-label="Sync"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></svg></button>
+        <button class="ib" id="btnSettings" title="تنظیمات" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      </div>
+    </div>
+    <div class="searchrow">
+      <div class="search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="q" placeholder="جستجوی اکانت..." autocomplete="off">
+      </div>
+      <button class="ib" id="btnFilter" title="فیلتر" aria-label="Filter"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg></button>
+      <button class="ib" id="btnSort" title="مرتب‌سازی" aria-label="Sort"><svg viewBox="0 0 24 24"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg></button>
+    </div>
+    <div class="summary"><span>اکانت: <b id="sCount">0</b></span><span>امتیاز: <b id="sPoints">0</b></span><span>دلار: <b id="sUsd">$0.00</b></span></div>
+    <div id="status"></div>
+  </header>
+
+  <div id="list"></div>
+  <div class="empty" id="empty" hidden>هنوز اکانتی نیست.<br>با دکمه‌ی + شروع کن.</div>
+</div>
+
+<button class="fab" id="fab" aria-label="افزودن">+</button>
+<div id="overlay" hidden><div id="sheet"></div></div>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+// ====== Google OAuth Client ID ======
+const GOOGLE_CLIENT_ID = '165607945187-lbolfkbhtpe6i3orj05sig19tvnu34ss.apps.googleusercontent.com';
+// ====================================
+
+const SCOPE = 'https://www.googleapis.com/auth/gmail.readonly';
+const KEY = 'ppoint-accounts-v1', PREFS = 'ppoint-prefs-v1';
+const RANKS = ['Unknown','Bronze','Silver','Gold','Platinum','Diamond'];
+const RANK_ORDER = {Unknown:-1,Bronze:0,Silver:1,Gold:2,Platinum:3,Diamond:4};
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const cap = s => s[0].toUpperCase()+s.slice(1).toLowerCase();
+const configured = !GOOGLE_CLIENT_ID.startsWith('PUT_YOUR');
+
+let accounts = [];
+try{ accounts = JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ accounts=[]; }
+let prefs = Object.assign({theme:'red', sort:'recent', dir:-1, rank:'all', notify:false, auto:0}, JSON.parse(localStorage.getItem(PREFS)||'{}'));
+const ALERTS_KEY='ppoint-alerts-v1';
+let alerts=[]; try{ alerts=JSON.parse(localStorage.getItem(ALERTS_KEY)||'[]'); }catch(e){ alerts=[]; }
+const saveAlerts=()=>localStorage.setItem(ALERTS_KEY, JSON.stringify(alerts));
+let lastRefresh=0;
+let tokenClient=null, pending=null, busy=false;
+
+const persist = () => localStorage.setItem(KEY, JSON.stringify(accounts));
+const savePrefs = () => { localStorage.setItem(PREFS, JSON.stringify(prefs)); document.documentElement.dataset.theme = prefs.theme; };
+function setStatus(t, err){ const s=$('status'); s.textContent=t||''; s.className=err?'err':''; }
+const usd = v => { v=Number(v)||0; return '$'+((v>0&&v<0.01)?v.toFixed(3):v.toFixed(2)); };
+const when = t => t ? new Date(t).toLocaleString('fa-IR',{dateStyle:'medium',timeStyle:'short'}) : '—';
+const STAR = '<svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 17l-6.1 3.4 1.5-6.8L2.2 9l6.9-.7z"/></svg>';
+const TAG = '<svg viewBox="0 0 24 24"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9zM7.5 8a1.5 1.5 0 1 0 0-.01z"/></svg>';
+const NOTE = '<svg class="noteic" viewBox="0 0 24 24"><path d="M5 4h14v12l-4 4H5z"/><path d="M8 9h8M8 13h5"/></svg>';
+
+// ---------- Google sign-in (token only, never stored) ----------
+function initGoogle(){
+  if(!configured || !window.google || !window.google.accounts) return false;
+  if(tokenClient) return true;
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID, scope: SCOPE,
+    callback: r => { const p=pending; pending=null; if(p) r.access_token ? p.resolve(r.access_token) : p.reject(new Error(r.error||'no token')); },
+    error_callback: e => { const p=pending; pending=null; if(p) p.reject(new Error(e.type||'popup')); }
+  });
+  return true;
+}
+function getToken(hint, interactive){
+  return new Promise((resolve,reject)=>{
+    if(!initGoogle()) return reject(new Error('اسکریپت گوگل هنوز لود نشده؛ چند ثانیه بعد دوباره امتحان کن'));
+    if(pending) return reject(new Error('یه ورود دیگه در جریانه'));
+    pending = {resolve,reject};
+    tokenClient.requestAccessToken({ login_hint: hint||'', prompt: interactive ? (hint?'':'select_account') : 'none' });
+  });
+}
+async function gmail(path, token, retry=1){
+  let r = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/'+path, {headers:{Authorization:'Bearer '+token}});
+  if(r.status===429 && retry>0){ await new Promise(z=>setTimeout(z,1500)); return gmail(path, token, retry-1); }
+  if(!r.ok) throw new Error(r.status===401?'ورود منقضی شده':r.status===403?'دسترسی جی‌میل داده نشده':r.status===429?'محدودیت سرعت گوگل؛ کمی بعد دوباره':'Gmail '+r.status);
+  return r.json();
+}
+
+// ---------- alert classification ----------
+const ATYPES = {
+  quest:{i:'🎯',l:'مأموریت / Quest',push:true},
+  boost:{i:'⚡',l:'پاداش ویژه',push:true},
+  expire:{i:'⏳',l:'نزدیک انقضا',push:true},
+  rank:{i:'🏆',l:'تغییر رتبه',push:true},
+  prize:{i:'🎁',l:'جایزه‌ی هفتگی',push:true},
+  points:{i:'📈',l:'تغییر امتیاز',push:false},
+  credit:{i:'💳',l:'اعتبار / خرج امتیاز',push:false}
+};
+function classify(sub, sn){
+  const t = sub+' '+sn;
+  if(/\b(quests?|missions?|challenges?|milestones?)\b|مأموریت|ماموریت|کوئست/i.test(t) && /play/i.test(t)) return 'quest';
+  if(/expir/i.test(t) && /points?/i.test(t)) return 'expire';
+  if(/(bonus|boost|multiplier|double|2x|3x|extra)\s*(play\s*)?points?|points?\s*(boost|bonus|event)|limited[- ]time/i.test(t)) return 'boost';
+  if(/Congrats on earning|You(?:'ve| have)\s+(?:hit|reached)\s+Play Points/i.test(t)) return 'rank';
+  if(/weekly prize/i.test(t)) return 'prize';
+  if(/Play Points used|using Google Play Points|Play Credit/i.test(t)) return 'credit';
+  return null;
+}
+const b64 = d => { const bin=atob(d.replace(/-/g,'+').replace(/_/g,'/')); return new TextDecoder().decode(Uint8Array.from(bin,c=>c.charCodeAt(0))); };
+async function bodyText(token, id){
+  const m = await gmail('messages/'+id+'?format=full', token);
+  let plain=null, html=null;
+  (function walk(p){ if(!p) return;
+    if(p.mimeType==='text/plain' && p.body && p.body.data && !plain) plain=p.body.data;
+    else if(p.mimeType==='text/html' && p.body && p.body.data && !html) html=p.body.data;
+    (p.parts||[]).forEach(walk); })(m.payload);
+  const txt = plain ? b64(plain) : html ? b64(html).replace(/<[^>]+>/g,' ') : '';
+  return txt.replace(/\s+/g,' ');
+}
+
+// ---------- read Play Points info from emails ----------
+async function readPlayPoints(token){
+  const profile = await gmail('profile', token);
+  const q = encodeURIComponent('from:google.com ("Play Points" OR "Google Play Points" OR "Play Credit" OR quest OR quests OR mission OR missions) newer_than:730d');
+  const ids = []; let pageToken = '';
+  do{
+    const r = await gmail('messages?maxResults=100&q='+q+(pageToken?'&pageToken='+pageToken:''), token);
+    ids.push(...(r.messages||[])); pageToken = r.nextPageToken||'';
+  }while(pageToken && ids.length<400);
+  const msgs = [];
+  for(let i=0;i<ids.length;i+=10){
+    const part = await Promise.all(ids.slice(i,i+10).map(m =>
+      gmail('messages/'+m.id+'?format=metadata&metadataHeaders=Subject', token).catch(()=>null)));
+    msgs.push(...part.filter(Boolean));
+    setStatus('در حال خواندن ایمیل‌ها... '+Math.min(i+10,ids.length)+'/'+ids.length);
+  }
+  msgs.sort((a,b)=>Number(b.internalDate)-Number(a.internalDate));   // newest first
+  const out = {email:profile.emailAddress, rank:null, points:null, history:[], meta:{}, alerts:[],
+    stats:{scanned:msgs.length, creditUsd:0, pointsSpent:0, redemptions:0, lastPrize:null, weekly:false, rankMail:false, samples:[]}};
+  let rankMsg=null; const now=Date.now();
+  for(const m of msgs){
+    const s = (m.snippet||'').replace(/&#39;/g,"'").replace(/&amp;/g,'&');
+    const t = Number(m.internalDate);
+    const sub = ((m.payload&&m.payload.headers||[]).find(h=>h.name==='Subject')||{}).value||'';
+    const w = s.match(/Play Points\s*[•·]\s*(Bronze|Silver|Gold|Platinum|Diamond)\s+(\d+)/i);
+    if(w){
+      out.history.push({t, points:parseInt(w[2],10), rank:cap(w[1])});
+      if(out.points===null){ out.points=parseInt(w[2],10); out.stats.lastPrize=t; out.stats.weekly=true; if(!out.rank) out.rank=cap(w[1]); }
+    }
+    const c = s.match(/Congrats on earning\s+(Bronze|Silver|Gold|Platinum|Diamond)/i)
+           || s.match(/You(?:'ve| have)\s+(?:hit|reached)\s+Play Points\s+(Bronze|Silver|Gold|Platinum|Diamond)/i)
+           || sub.match(/You(?:'ve| have)\s+(?:hit|reached)\s+Play Points\s+(Bronze|Silver|Gold|Platinum|Diamond)/i);
+    if(c){ out.stats.rankMail=true; if(!out.rank) out.rank = cap(c[1]); if(!rankMsg) rankMsg=m.id; }
+    const cr = s.match(/Play Points used\s*\$([\d.]+)\s*Google Play Credit\s*(\d+)/i);
+    if(cr){ out.stats.creditUsd += parseFloat(cr[1]); out.stats.pointsSpent += parseInt(cr[2],10); out.stats.redemptions++; }
+    else if(/using Google Play Points/i.test(s)){
+      out.stats.redemptions++;
+      const sw = s.match(/Play Points used\s*(\d+)\s/); if(sw) out.stats.pointsSpent += parseInt(sw[1],10);
+    }
+    const type = classify(sub, s);
+    if(type && now-t < 45*86400000) out.alerts.push({id:m.id, type, title:sub.trim()||s.slice(0,70), sn:s.slice(0,150), t, threadId:m.threadId||m.id});
+    if(out.stats.samples.length<12) out.stats.samples.push({d:t, sub, sn:s.slice(0,170)});
+  }
+  // deeper read: full text of the newest rank email (rank validity, earn rate)
+  if(rankMsg){
+    try{
+      const txt = await bodyText(token, rankMsg);
+      const v = txt.match(/Enjoy Play Points\s+(Bronze|Silver|Gold|Platinum|Diamond)\s+until\s+([^.]+?)\./i);
+      if(v) out.meta.rankUntil = v[2].trim();
+      const e = txt.match(/Earn\s+([\d.]+)\s+points?\s+per\s+\$\s?1/i);
+      if(e) out.meta.earnRate = e[1];
+    }catch(err){}
+  }
+  return out;
+}
+
+// ---------- alerts ----------
+const unread = () => alerts.filter(a=>!a.read).length;
+function updateBell(){ const n=unread(), b=$('bellBadge'); b.hidden = n===0; b.textContent = n>99?'99+':n; }
+async function notifyNew(list){
+  setStatus(`${list.length} پیام جدید: `+list.slice(0,2).map(x=>ATYPES[x.type].l).join('، ')+(list.length>2?' ...':''));
+  if(!prefs.notify || !('Notification' in window) || Notification.permission!=='granted') return;
+  for(const al of list.filter(x=>ATYPES[x.type].push).slice(0,4)){
+    const title = ATYPES[al.type].i+' '+(al.title||ATYPES[al.type].l);
+    const opts = {body:(al.acct+(al.sn?'\n'+al.sn:'')), icon:'icon-192.png', badge:'icon-192.png', tag:al.id, lang:'fa', dir:'rtl'};
+    try{ const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration();
+         if(reg) await reg.showNotification(title, opts); else new Notification(title, opts); }catch(e){}
+  }
+}
+
+// ---------- sync ----------
+async function syncAccount(hint, interactive){
+  const token = await getToken(hint, interactive);
+  const info = await readPlayPoints(token);
+  let a = accounts.find(x=>x.email.toLowerCase()===info.email.toLowerCase());
+  if(!a){ a = {id:uid(), email:info.email, rank:'Unknown', points:0, usd:0, note:''}; accounts.push(a); }
+  const first = !a.synced;
+  const prevPoints = (first || a.emailPoints==null) ? null : a.emailPoints;
+  if(info.rank) a.rank = info.rank;
+  a.pointsFound = info.points!==null;
+  const manualWins = a.pointsManualAt && a.pointsManualAt > (info.stats.lastPrize||0);
+  if(info.points!==null){ a.emailPoints = info.points; if(!manualWins) a.points = info.points; }
+  a.history = info.history.slice().sort((x,y)=>x.t-y.t).slice(-30);
+  a.meta = info.meta; a.stats = info.stats; a.synced = true; a.updated = Date.now();
+  // new alerts (first sync of an account = baseline, nothing is "new")
+  const known = new Set(alerts.map(x=>x.id)), fresh = [];
+  for(const al of info.alerts){
+    if(known.has(al.id)) continue;
+    const item = Object.assign({}, al, {acct:a.email, read:first});
+    alerts.push(item); if(!first) fresh.push(item);
+  }
+  if(prevPoints!==null && info.points!==null && info.points!==prevPoints){
+    const item = {id:'pc-'+a.id+'-'+prevPoints+'-'+info.points, type:'points', acct:a.email, title:'امتیاز '+prevPoints+' ← '+info.points, sn:'', t:Date.now(), read:false};
+    if(!known.has(item.id)){ alerts.push(item); fresh.push(item); }
+  }
+  alerts.sort((x,y)=>y.t-x.t); alerts = alerts.slice(0,150);
+  saveAlerts(); persist(); render(); updateBell(); lastRefresh = Date.now();
+  if(fresh.length) notifyNew(fresh);
+  return {info, a, fresh};
+}
+async function refreshAll(quiet){
+  if(busy) return;
+  if(!navigator.onLine) return quiet?null:setStatus('اینترنت وصل نیست.', true);
+  const targets = accounts.filter(a=>a.email.includes('@'));
+  if(!targets.length) return quiet?null:setStatus('اول با «ورود با گوگل» یه اکانت اضافه کن.', true);
+  busy=true; let ok=0, fail=0, news=0;
+  for(const a of targets){
+    if(!quiet) setStatus('در حال خواندن '+a.email+' ...');
+    try{ const r = await syncAccount(a.email, false); ok++; news+=r.fresh.length; } catch(e){ fail++; }
+  }
+  busy=false;
+  if(quiet && !fail && !news) return setStatus('');
+  if(news) return;   // notifyNew already wrote the status
+  setStatus(fail ? `${ok} اکانت به‌روز شد. ${fail} تا ورود دوباره می‌خوان (+ ← ورود با گوگل).` : `همه‌ی ${ok} اکانت به‌روز شدن.`, !!fail);
+}
+async function googleAdd(){
+  setStatus('در حال ورود...');
+  try{
+    const {info} = await syncAccount('', true);
+    setStatus(`${info.email} اضافه شد: ${info.rank||'رتبه پیدا نشد'}، ${info.points!==null?info.points+' امتیاز':'امتیاز پیدا نشد'}`);
+    return true;
+  }catch(e){ setStatus('ورود انجام نشد: '+e.message, true); return false; }
+}
+
+// ---------- list ----------
+function visible(){
+  const q = $('q').value.trim().toLowerCase();
+  let list = accounts.filter(a => (a.email+' '+(a.note||'')).toLowerCase().includes(q) && (prefs.rank==='all' || a.rank===prefs.rank));
+  const k = prefs.sort, d = prefs.dir;
+  list.sort((a,b)=>{
+    let x, y;
+    if(k==='name'){ return a.email.localeCompare(b.email)*d; }
+    if(k==='rank'){ x=RANK_ORDER[a.rank]; y=RANK_ORDER[b.rank]; }
+    else if(k==='points'){ x=a.points; y=b.points; }
+    else if(k==='usd'){ x=a.usd; y=b.usd; }
+    else { x=a.updated||0; y=b.updated||0; }
+    return (x-y)*d;
+  });
+  return list;
+}
+function deltaChip(a){
+  const h=a.history; if(!h||h.length<2) return '';
+  const d=h[h.length-1].points-h[h.length-2].points; if(!d) return '';
+  return `<span class="delta ${d>0?'up':'down'}">${d>0?'▲ +':'▼ '}${d}</span>`;
+}
+function render(){
+  const list = visible();
+  $('list').innerHTML = list.map(a=>`<div class="card" data-id="${a.id}">
+    <div class="top"><div class="name">${esc(a.email)}</div>
+      <div class="badges">${a.note?NOTE:''}<span class="rank ${a.rank}">${a.rank==='Unknown'?'—':a.rank}</span></div></div>
+    <div class="chips"><span class="chip p">${STAR}${a.pointsFound===false?'—':a.points} points</span><span class="chip d">${TAG}${usd(a.usd)}</span>${deltaChip(a)}</div>
+    <div class="edited">📅 آخرین ویرایش: ${when(a.updated)}${(a.emailPoints!=null&&a.pointsManualAt&&a.points!==a.emailPoints)?' • امتیاز دستی (ایمیل: '+a.emailPoints+')':''}</div></div>`).join('');
+  $('empty').hidden = accounts.length>0;
+  $('sCount').textContent = accounts.length;
+  $('sPoints').textContent = accounts.reduce((s,a)=>s+a.points,0);
+  $('sUsd').textContent = usd(accounts.reduce((s,a)=>s+a.usd,0));
+}
+$('list').addEventListener('click', e=>{ const c=e.target.closest('.card'); if(c) openEdit(c.dataset.id); });
+$('q').addEventListener('input', render);
+
+// ---------- sheets ----------
+function openSheet(html, bind){ $('sheet').innerHTML = html; $('overlay').hidden=false; if(bind) bind(); }
+function closeSheet(){ $('overlay').hidden=true; $('sheet').innerHTML=''; }
+$('overlay').addEventListener('click', e=>{ if(e.target.id==='overlay') closeSheet(); });
+
+function formHtml(a){
+  const isNew = !a; a = a || {email:'',rank:'Unknown',points:0,usd:0,note:''};
+  return `<h2>${isNew?'افزودن اکانت':'ویرایش اکانت'}</h2>
+  ${isNew?`<button class="btn primary block" id="gBtn">+ ورود با گوگل (خودکار)</button><div class="or">یا دستی وارد کن:</div>`:''}
+  <label>نام اکانت / ایمیل<input id="fName" value="${esc(a.email)}" autocomplete="off"></label>
+  <label>رتبه<select id="fRank">${RANKS.map(r=>`<option value="${r}" ${r===a.rank?'selected':''}>${r==='Unknown'?'نامشخص':r}</option>`).join('')}</select></label>
+  <div class="row2"><label>امتیاز<input id="fPoints" type="number" min="0" step="1" inputmode="numeric" value="${a.points}"></label>
+  <label>دلار<input id="fUsd" type="number" min="0" step="0.001" inputmode="decimal" value="${a.usd}"></label></div>
+  <label>یادداشت<textarea id="fNote">${esc(a.note||'')}</textarea></label>
+  <div class="actions"><button class="btn primary" id="saveBtn">ذخیره</button>
+  ${isNew?'':`${a.email.includes('@')?'<button class="btn" id="syncOne">به‌روزرسانی از جی‌میل</button>':''}${a.history&&a.history.length?'<button class="btn" id="detBtn">نمودار و جزئیات</button>':''}${a.stats?'<button class="btn" id="repBtn">گزارش ایمیل‌ها</button>':''}<button class="btn danger" id="delBtn">حذف</button>`}
+  <button class="btn" id="cancelBtn">بستن</button></div>`;
+}
+function readForm(a){
+  a.email = $('fName').value.trim() || a.email || 'بدون نام';
+  a.rank = $('fRank').value;
+  const oldPts = a.points;
+  a.points = Math.max(0, parseInt($('fPoints').value)||0);
+  if(a.points!==oldPts) a.pointsManualAt = Date.now();
+  a.usd = Math.max(0, parseFloat($('fUsd').value)||0);
+  a.note = $('fNote').value.trim();
+  a.updated = Date.now();
+  if(a.pointsFound===false && a.points>0) a.pointsFound = true;
+}
+function openAdd(){
+  openSheet(formHtml(null), ()=>{
+    $('gBtn').onclick = async()=>{ if(!configured) return setStatus('Client ID تنظیم نشده.', true); closeSheet(); await googleAdd(); };
+    $('saveBtn').onclick = ()=>{ if(!$('fName').value.trim()) return $('fName').focus();
+      const a={id:uid(),email:'',rank:'Unknown',points:0,usd:0,note:''}; readForm(a); accounts.push(a); persist(); render(); closeSheet(); };
+    $('cancelBtn').onclick = closeSheet;
+  });
+}
+function openEdit(id){
+  const a = accounts.find(x=>x.id===id); if(!a) return;
+  openSheet(formHtml(a), ()=>{
+    $('saveBtn').onclick = ()=>{ readForm(a); persist(); render(); closeSheet(); };
+    $('cancelBtn').onclick = closeSheet;
+    $('delBtn').onclick = ()=>{ if(confirm('این اکانت حذف شود؟')){ accounts=accounts.filter(x=>x!==a); persist(); render(); closeSheet(); } };
+    const so=$('syncOne'); if(so) so.onclick = async()=>{ closeSheet(); setStatus('در حال خواندن '+a.email+' ...');
+      try{ await syncAccount(a.email,false); setStatus('به‌روز شد.'); }catch(e){ setStatus('نیاز به ورود دوباره: '+e.message, true); } };
+    const rb=$('repBtn'); if(rb) rb.onclick = ()=>openReport(a);
+    const db=$('detBtn'); if(db) db.onclick = ()=>openDetail(a);
+  });
+}
+function chartSvg(h){
+  const W=300,H=110,P=14; const xs=h.map(p=>p.t), ys=h.map(p=>p.points);
+  const x0=Math.min(...xs), x1=Math.max(...xs)||1, y0=Math.min(...ys,0), y1=Math.max(...ys,1);
+  const X=t=>P+(x1===x0?(W-2*P)/2:(t-x0)/(x1-x0)*(W-2*P)), Y=v=>H-P-(v-y0)/((y1-y0)||1)*(H-2*P);
+  const pts=h.map(p=>X(p.t).toFixed(1)+','+Y(p.points).toFixed(1)).join(' ');
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round"/>${h.map(p=>`<circle cx="${X(p.t).toFixed(1)}" cy="${Y(p.points).toFixed(1)}" r="3.4" fill="var(--accent)"/>`).join('')}</svg>`;
+}
+function openDetail(a){
+  const h=a.history||[], st=a.stats||{}, m=a.meta||{};
+  const rows=h.slice().reverse().slice(0,8).map(p=>`<div class="kv"><span>${when(p.t)}</span><span style="direction:ltr">${p.rank} • ${p.points} points</span></div>`).join('');
+  openSheet(`<h2>جزئیات ${esc(a.email)}</h2>
+  ${h.length>1?chartSvg(h):''}
+  <div class="kv"><span>رتبه و امتیاز فعلی</span><span style="direction:ltr">${a.rank==='Unknown'?'—':a.rank} • ${a.pointsFound===false?'—':a.points}</span></div>
+  ${m.rankUntil?`<div class="kv"><span>اعتبار رتبه تا</span><span style="direction:ltr">${esc(m.rankUntil)}</span></div>`:''}
+  ${m.earnRate?`<div class="kv"><span>امتیاز به ازای هر ۱ دلار خرید</span><span>${esc(m.earnRate)}</span></div>`:''}
+  ${st.lastPrize?`<div class="kv"><span>آخرین جایزه‌ی هفتگی</span><span>${when(st.lastPrize)}</span></div>`:''}
+  <div class="kv"><span>اعتبار گرفته‌شده با امتیاز</span><span>${usd(st.creditUsd||0)}</span></div>
+  <div class="kv"><span>امتیاز خرج‌شده</span><span>${st.pointsSpent||0}</span></div>
+  <h2 style="margin-top:18px;font-size:16px">تاریخچه‌ی امتیاز (ایمیل‌های جایزه‌ی هفتگی)</h2>${rows||'<p class="hint">هنوز ایمیلی نیست.</p>'}
+  <div class="actions"><button class="btn" id="back">بستن</button></div>`, ()=>{ $('back').onclick=closeSheet; });
+}
+function openAlerts(){
+  const list = alerts.slice().sort((x,y)=>y.t-x.t).slice(0,60);
+  const link = al => 'https://mail.google.com/mail/?authuser='+encodeURIComponent(al.acct)+'#all/'+encodeURIComponent(al.threadId||al.id);
+  openSheet(`<h2>پیام‌ها و هشدارها</h2>
+  ${list.length?list.map(al=>`<div class="al ${al.read?'':'new'}"><div class="ic">${ATYPES[al.type].i}</div><div style="flex:1;min-width:0">
+    <div class="ty">${ATYPES[al.type].l} • ${esc(al.acct)}</div><div class="tt">${esc(al.title)}</div>${al.sn?`<div class="mm">${esc(al.sn)}</div>`:''}
+    <div class="mm">${when(al.t)}${al.threadId&&!String(al.id).startsWith('pc-')?` • <a href="${link(al)}" target="_blank" rel="noopener">باز کردن در جی‌میل</a>`:''}</div></div></div>`).join('')
+    :'<p class="hint">هنوز هشداری نیست. وقتی ایمیل مأموریت، پاداش، جایزه‌ی هفتگی، تغییر رتبه یا امتیاز بیاد اینجا نشون داده میشه.</p>'}
+  <div class="actions"><button class="btn primary" id="readAll">همه خوانده شد</button><button class="btn danger" id="clrAll">پاک کردن</button><button class="btn" id="back">بستن</button></div>`, ()=>{
+    alerts.forEach(a=>a.read=true); saveAlerts(); updateBell();
+    $('readAll').onclick=closeSheet;
+    $('clrAll').onclick=()=>{ alerts=[]; saveAlerts(); updateBell(); closeSheet(); };
+    $('back').onclick=closeSheet;
+  });
+}
+function openReport(a){
+  const st=a.stats;
+  openSheet(`<h2>گزارش ایمیل‌ها</h2><p class="hint" style="margin-top:0">${esc(a.email)} — ${st.scanned} ایمیل Play Points خوانده شد. اعتبار از امتیاز: ${usd(st.creditUsd)} • امتیاز خرج‌شده: ${st.pointsSpent}${st.weekly?'':' • ایمیل «جایزه‌ی هفتگی» پیدا نشد، پس امتیاز خونده نشد.'}</p>
+  <div class="rep">${st.samples.length?st.samples.map(x=>`<div><span>${when(x.d)}</span> — ${esc(x.sub)}<br>${esc(x.sn)}</div>`).join(''):'<div>هیچ ایمیلی پیدا نشد.</div>'}</div>
+  <div class="actions"><button class="btn" id="back">بستن</button></div>`, ()=>{ $('back').onclick=closeSheet; });
+}
+function optList(items, current, onPick){
+  return items.map(([v,l])=>`<div class="opt ${v===current?'on':''}" data-v="${v}"><span>${l}</span><span>${v===current?'✓':''}</span></div>`).join('');
+}
+function openSort(){
+  const items=[['recent','آخرین ویرایش'],['name','نام (A-Z)'],['points','امتیاز'],['usd','دلار'],['rank','رتبه']];
+  openSheet(`<h2>مرتب‌سازی</h2>${optList(items,prefs.sort)}<p class="hint">یه بار دیگه روی گزینه‌ی انتخاب‌شده بزنی جهت (صعودی/نزولی) عوض میشه. الان: ${prefs.dir===1?'صعودی':'نزولی'}</p>`, ()=>{
+    $('sheet').querySelectorAll('.opt').forEach(o=>o.onclick=()=>{
+      const v=o.dataset.v; if(prefs.sort===v) prefs.dir*=-1; else { prefs.sort=v; prefs.dir = (v==='name')?1:-1; }
+      savePrefs(); render(); closeSheet(); });
+  });
+}
+function openFilter(){
+  const items=[['all','همه‌ی رتبه‌ها'],...RANKS.filter(r=>r!=='Unknown').map(r=>[r,r]),['Unknown','نامشخص']];
+  openSheet(`<h2>فیلتر رتبه</h2>${optList(items,prefs.rank)}`, ()=>{
+    $('sheet').querySelectorAll('.opt').forEach(o=>o.onclick=()=>{ prefs.rank=o.dataset.v; savePrefs(); render(); closeSheet(); });
+  });
+}
+function openSettings(){
+  openSheet(`<h2>تنظیمات</h2>
+  <label>تم رنگی<select id="sTheme"><option value="red" ${prefs.theme==='red'?'selected':''}>سیاه و قرمز</option><option value="green" ${prefs.theme==='green'?'selected':''}>سبز (مثل نمونه)</option></select></label>
+  <label>بررسی خودکار وقتی اپ بازه<select id="sAuto"><option value="0" ${!prefs.auto?'selected':''}>غیرفعال</option><option value="15" ${prefs.auto===15?'selected':''}>هر ۱۵ دقیقه</option><option value="30" ${prefs.auto===30?'selected':''}>هر ۳۰ دقیقه</option><option value="60" ${prefs.auto===60?'selected':''}>هر ساعت</option></select></label>
+  <button class="btn block" id="sNotify">${prefs.notify&&'Notification' in window&&Notification.permission==='granted'?'🔔 اعلان‌ها فعاله (برای خاموش کردن بزن)':'🔔 فعال کردن اعلان‌ها'}</button>
+  <p class="hint">اعلان‌ها فقط وقتی میان که اپ باز یا توی پس‌زمینه‌ی گوشی باشه. اگه اپ کاملاً بسته باشه، گوگل اجازه‌ی خواندن ایمیل رو نمیده و اعلانی نمیاد.</p>
+  <button class="btn block" id="sGoogle">+ ورود با گوگل (افزودن جی‌میل)</button>
+  <button class="btn block" id="sRefresh">به‌روزرسانی همه از جی‌میل</button>
+  <button class="btn block" id="sCsv">خروجی CSV</button>
+  <button class="btn block" id="sBackup">پشتیبان‌گیری (JSON)</button>
+  <button class="btn block" id="sRestore">بازیابی از پشتیبان</button>
+  <input type="file" id="sFile" accept="application/json,.json" hidden>
+  <button class="btn block danger" id="sClear">پاک کردن همه‌ی داده‌ها</button>
+  <p class="hint">برنامه فقط ایمیل‌های Google Play Points رو فقط‌خواندنی می‌خونه و همه‌چی روی همین دستگاه می‌مونه. <a href="privacy.html">حریم خصوصی</a></p>
+  <div class="actions"><button class="btn" id="sClose">بستن</button></div>`, ()=>{
+    $('sTheme').onchange = e=>{ prefs.theme=e.target.value; savePrefs(); };
+    $('sAuto').onchange = e=>{ prefs.auto=parseInt(e.target.value)||0; savePrefs(); scheduleAuto(); };
+    $('sNotify').onclick = async()=>{
+      if(prefs.notify){ prefs.notify=false; savePrefs(); return openSettings(); }
+      if(!('Notification' in window)) return setStatus('این مرورگر اعلان رو پشتیبانی نمی‌کنه.', true);
+      const p = Notification.permission==='granted' ? 'granted' : await Notification.requestPermission();
+      if(p==='granted'){ prefs.notify=true; savePrefs(); }
+      else setStatus('اجازه‌ی اعلان داده نشد. از تنظیمات سایت توی Chrome فعالش کن.', true);
+      openSettings();
+    };
+    $('sGoogle').onclick = async()=>{ closeSheet(); if(!configured) return setStatus('Client ID تنظیم نشده.', true); await googleAdd(); };
+    $('sRefresh').onclick = ()=>{ closeSheet(); refreshAll(); };
+    $('sCsv').onclick = ()=>{
+      const csv='Account,Rank,Points,Dollar,Note\n'+accounts.map(a=>[a.email,a.rank,a.pointsFound===false?'':a.points,a.usd,a.note||''].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+      download('ppoint-accounts.csv','text/csv',csv); };
+    $('sBackup').onclick = ()=>download('ppoint-backup.json','application/json',JSON.stringify(accounts.map(({stats,...r})=>r),null,2));
+    $('sRestore').onclick = ()=>$('sFile').click();
+    $('sFile').onchange = async e=>{
+      try{
+        const data = JSON.parse(await e.target.files[0].text());
+        if(!Array.isArray(data)) throw 0;
+        const clean = data.filter(r=>r&&typeof r.email==='string').map(r=>({id:r.id||uid(),email:r.email,rank:RANKS.includes(r.rank)?r.rank:'Unknown',points:Math.max(0,+r.points||0),usd:Math.max(0,+r.usd||0),note:String(r.note||''),updated:r.updated||Date.now()}));
+        if(confirm(clean.length+' اکانت جایگزین اطلاعات فعلی بشه؟')){ accounts=clean; persist(); render(); closeSheet(); }
+      }catch(err){ setStatus('فایل پشتیبان معتبر نیست.', true); }
+    };
+    $('sClear').onclick = ()=>{ if(accounts.length && confirm('همه‌ی اکانت‌ها پاک بشن؟')){ accounts=[]; persist(); render(); closeSheet(); } };
+    $('sClose').onclick = closeSheet;
+  });
+}
+function download(name,type,text){
+  const url=URL.createObjectURL(new Blob([text],{type})); const l=document.createElement('a');
+  l.href=url; l.download=name; l.click(); URL.revokeObjectURL(url);
+}
+
+$('fab').onclick = openAdd;
+$('btnSort').onclick = openSort;
+$('btnFilter').onclick = openFilter;
+$('btnSettings').onclick = openSettings;
+$('btnSync').onclick = ()=>refreshAll();
+$('btnBell').onclick = openAlerts;
+$('btnPdf').onclick = ()=>window.print();
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeSheet(); });
+
+let autoTimer=null;
+function scheduleAuto(){ clearInterval(autoTimer); if(prefs.auto>0) autoTimer=setInterval(()=>{ if(!document.hidden) refreshAll(true); }, prefs.auto*60000); }
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && prefs.auto>0 && Date.now()-lastRefresh>10*60000) refreshAll(true); });
+savePrefs(); render(); updateBell(); scheduleAuto();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+window.addEventListener('load', ()=>{
+  if(!configured || !accounts.some(a=>a.email.includes('@'))) return;
+  const t=setInterval(()=>{ if(window.google && window.google.accounts){ clearInterval(t); refreshAll(true).catch(()=>{}); } },300);
+  setTimeout(()=>clearInterval(t),8000);
+});
+</script>
+</body>
+</html>
